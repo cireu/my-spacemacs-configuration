@@ -36,8 +36,13 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     treemacs
+     ;; Use treemacs instead of neotree
+     japanese
      chinese
+     ;; Chinese input layers
      auto-completion
+     lsp
      ;; Code AutoCompletion
      ivy
      ;; auto-completion
@@ -45,13 +50,16 @@ values."
      ;; better-defaults
      python
      typescript
+     common-lisp
      emacs-lisp
      ;; code programming
      git
      ;; code version control
-     markdown
+     latex
+     asciidoc
      org
      html
+     yaml
      (plantuml :variables
                org-plantuml-jar-path (expand-file-name "~/.emacs.d/static/plantuml/plantuml.jar"))
      ;; (shell :variables
@@ -65,11 +73,17 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      pyim-basedict
+                                      posframe
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+                                    migemo
+                                    evil-tutor
+                                    )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -112,7 +126,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -137,23 +151,25 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(doom-one-light
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Fira Code"
+   dotspacemacs-default-font '("mononoki"
                                :size 16
                                :weight medium
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.1
+                               )
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
    ;; (default "SPC")
    dotspacemacs-emacs-command-key "SPC"
-   ;; The key used for Vim Ex commands (default ":")
+   ;; The key used for hybrid Ex commands (default ":")
    dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
@@ -219,7 +235,7 @@ values."
    dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 1.0
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -261,6 +277,7 @@ values."
    ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
    ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
    ;; This variable can also be set to a property list for finer control:
+   dotspacemacs-mode-line-theme 'spacemacs
    ;; '(:relative nil
    ;;   :disabled-for-modes dired-mode
    ;;                       doc-view-mode
@@ -306,20 +323,6 @@ values."
    ;; to compile Emacs 27 from source following the instructions in file
    ;; EXPERIMENTAL.org at to root of the git repository.
    ;; (default nil)
-   dotspacemacs-enable-emacs-pdumper t
-
-   ;; File path pointing to emacs 27.1 executable compiled with support
-   ;; for the portable dumper (this is currently the branch pdumper).
-   ;; (default "emacs")
-   dotspacemacs-emacs-pdumper-executable-file "~/../../Desktop/emax64pd/bin/emacs.exe"
-
-   ;; Name of the Spacemacs dump file. This is the file will be created by the
-   ;; portable dumper in the cache directory under dumps sub-directory.
-   ;; To load it when starting Emacs add the parameter `--dump-file'
-   ;; when invoking Emacs 27.1 executable on the command line, for instance:
-   ;;   ./emacs --dump-file=~/.emacs.d/.cache/dumps/spacemacs.pdmp
-   ;; (default spacemacs.pdmp)
-   dotspacemacs-emacs-dumper-dump-file "spacemacs.pdmp"
    ))
 
 (defun dotspacemacs/user-init ()
@@ -334,8 +337,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
       '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
         ("org-cn"   . "http://elpa.emacs-china.org/org/")
         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
-    (add-to-list 'load-path "~/.emacs.d/tao-theme")
-    (add-to-list 'custom-theme-load-path "~/.emacs.d/tao-theme")
   )
 
 (defun dotspacemacs/user-config ()
@@ -352,12 +353,19 @@ you should place your code here."
   ;; Disable truncate-lines in Org-mode
   (add-hook 'org-mode-hook (lambda ()
                              (setq truncate-lines nil)))
-  (require 'pyim)
-  (require 'pyim-basedict)
+  ;; Set Pyim
   (pyim-basedict-enable)
   (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'ziranma-shuangpin)
+  (setq pyim-default-scheme 'xiaohe-shuangpin)
   (setq pyim-page-tooltip 'posframe)
+  ;; Set mode-line seperator. I prefer alternate because it can work well
+  ;; at any case.
+  (setq powerline-default-separator 'alternate)
+  ;; Set a Common Lisp interpreter, I use CCL.
+  ;; Load Quicklisp helper while loading the slime mode
+  (setq inferior-lisp-program "wx86cl64")
+  (add-hook 'slime-mode #'(lambda ()
+                            (load (expand-file-name "~/../../quicklisp/slime-helper.el"))))
 )
 
 
@@ -387,11 +395,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("bdb89df7761c4a92035bf6748014fe0ebaeede1b822e9632dc3b77e52ff900e2" "cc83320de05481856f04ef113ab6dcf93c5173d099a0b5a30fd9bf45cdfa5b1d" default))
- '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
-   '(pyim pyim-basedict pangu-spacing find-by-pinyin-dired ace-pinyin pinyinlib plantuml-mode unfill mwim web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss helm-company helm-c-yasnippet haml-mode fuzzy emmet-mode company-web web-completion-data company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-ag ace-jump-helm-line flycheck-pos-tip pos-tip yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode anaconda-mode pythonic tide typescript-mode flycheck smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download markdown-toc markdown-mode magit-gitflow htmlize gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md evil-magit magit magit-popup git-commit ghub treepy graphql with-editor mmm-mode org-plus-contrib ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy)))
+   '(slime-company slime common-lisp-snippets plantuml-mode unfill mwim web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss helm-company helm-c-yasnippet haml-mode fuzzy emmet-mode company-web web-completion-data company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-ag ace-jump-helm-line flycheck-pos-tip pos-tip yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional cython-mode anaconda-mode pythonic tide typescript-mode flycheck smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download markdown-toc markdown-mode magit-gitflow htmlize gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md evil-magit magit magit-popup git-commit ghub treepy graphql with-editor mmm-mode org-plus-contrib ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make helm helm-core google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
