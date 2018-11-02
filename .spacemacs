@@ -48,6 +48,7 @@ This function should only modify configuration layer settings."
      chinese
      ;; I am a Chinese
      ivy
+     ;; ivy
      auto-completion
      ;; Auto Completion
      emacs-lisp
@@ -79,17 +80,21 @@ This function should only modify configuration layer settings."
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
-                                      cygwin-mount
+                                      ;; cygwin-mount
+                                      ;; disable-mouse
+                                      (aweshell :location "~/.emacs.d/private/local/aweshell/")
                                       writeroom-mode
 				                              pyim-basedict
 				                              posframe
+                                      amx
+                                      elpa-mirror
 				      )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(evil-escape evil-goggles evil-tutor evil-magit evil-number evil-mc vi-tilde-fringe spacemacs-theme spaceline org-pomodoro org-bullets orgit company-quickhelp fancy-battery tern company-tern flx-ido smeargle lorem-ipsum spray gh-md)
+   dotspacemacs-excluded-packages '(evil-escape evil-goggles evil-tutor evil-magit  evil-mc vi-tilde-fringe spacemacs-theme org-pomodoro org-bullets orgit company-quickhelp fancy-battery tern company-tern flx-ido smeargle lorem-ipsum spray gh-md)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -143,7 +148,7 @@ It should only modify the values of Spacemacs settings."
    ;; This is an advanced option and should not be changed unless you suspect
    ;; performance issues due to garbage collection operations.
    ;; (default '(100000000 0.1))
-   dotspacemacs-gc-cons '(100000000 0.1)
+   dotspacemacs-gc-cons '(20971520 0.5)
 
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
@@ -171,7 +176,7 @@ It should only modify the values of Spacemacs settings."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
 
    ;; If non-nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
@@ -207,7 +212,7 @@ It should only modify the values of Spacemacs settings."
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(doom-opera-light
-                         doom-city-lights)
+                         doom-vibrant)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
@@ -216,7 +221,7 @@ It should only modify the values of Spacemacs settings."
    ;; refer to the DOCUMENTATION.org for more info on how to create your own
    ;; spaceline theme. Value can be a symbol or list with additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme 'doom
+   dotspacemacs-mode-line-theme nil
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -241,7 +246,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
-   dotspacemacs-emacs-leader-key "M-m"
+   dotspacemacs-emacs-leader-key "M-SPC"
 
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
@@ -249,7 +254,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
    ;; (default "C-M-m")
-   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   dotspacemacs-major-mode-emacs-leader-key "M-m"
 
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs `C-i', `TAB' and `C-m', `RET'.
@@ -295,7 +300,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 3.0
 
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
@@ -465,8 +470,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
           '(("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
             ("org"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
             ("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-            ("emwiki" . "https://elpa.emacs-china.org/emacswiki/")))
-
+            ;; ("emwiki" . "https://elpa.emacs-china.org/emacswiki/")
+            ))
   )
 
 (defun dotspacemacs/user-load ()
@@ -486,21 +491,25 @@ before packages are loaded."
                              (setq truncate-lines nil)))
   ;; Set Pyim
   (pyim-basedict-enable)
-  (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'xiaohe-shuangpin)
-  (setq pyim-page-tooltip 'posframe)
+  (setq default-input-method "pyim"
+        pyim-default-scheme 'xiaohe-shuangpin
+        pyim-page-tooltip 'posframe)
   ; Enable Pinyin Search
   (pyim-isearch-mode 1)
 
   ;; Set Common lisp intepreter
-  (setq inferior-lisp-program "sbcl")
+  (setq inferior-lisp-program "wx86cl64")
   ;; Set correct bash shell
-  (setq explicit-shell-file-name (expand-file-name "c:/msys64/usr/bin/bash.exe"))
+  ;; (setq explicit-shell-file-name (expand-file-name "c:/msys64/usr/bin/bash.exe"))
 
+  ;; (require 'disable-mouse)
+  ;; (global-disable-mouse-mode)
   ;; Use Cygwin Style Paths
-  (require 'cygwin-mount)
-  (setq cygwin-mount-cygwin-bin-directory "C:/msys64/usr/bin/")
-  (cygwin-mount-activate)
+  ;; (require 'cygwin-mount)
+  ;; (setq cygwin-mount-cygwin-bin-directory "C:/msys64/usr/bin/")
+  ;; (cygwin-mount-activate)
+  ;; (autoload 'aweshell)
+  (setq counsel-grep-base-command "rg -i -M 120  --no-heading --line-number --color never '%s' %s")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -515,9 +524,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(evil-search-module (quote evil-search))
+ '(evil-want-Y-yank-to-eol t)
  '(package-selected-packages
    (quote
-    (cygwin-mount yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify volatile-highlights uuidgen use-package treemacs-projectile treemacs-evil toc-org tide tagedit symon string-inflection spaceline-all-the-icons smex slime-company slim-mode setup-cygwin scss-mode sass-mode restart-emacs request ranger rainbow-delimiters pyvenv pytest pyim pyenv-mode py-isort pug-mode prettier-js posframe popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pangu-spacing overseer org-projectile org-present org-mime org-download org-brain open-junk-file nameless move-text mmm-mode markdown-toc livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gmail-message-mode fuzzy font-lock+ flymd flycheck-pos-tip flx find-by-pinyin-dired fill-column-indicator eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode doom-themes doom-modeline diminish define-word cython-mode counsel-projectile counsel-css company-web company-statistics company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode chinese-conv centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk aggressive-indent ace-pinyin ace-link ac-ispell))))
+    (amx yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify volatile-highlights uuidgen use-package treemacs-projectile treemacs-evil toc-org tide tagedit symon string-inflection spaceline-all-the-icons smex slime-company slim-mode scss-mode sass-mode restart-emacs request ranger rainbow-delimiters pyvenv pytest pyim pyenv-mode py-isort pug-mode prettier-js posframe popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pangu-spacing overseer org-projectile org-present org-mime org-download org-brain open-junk-file nameless move-text mmm-mode markdown-toc livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gmail-message-mode fuzzy font-lock+ flymd flycheck-pos-tip flx find-by-pinyin-dired fill-column-indicator eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elpa-mirror elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode doom-themes doom-modeline diminish define-word cython-mode counsel-projectile counsel-css company-web company-statistics company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode chinese-conv centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk aggressive-indent ace-pinyin ace-link ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
