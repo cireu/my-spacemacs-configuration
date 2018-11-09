@@ -86,6 +86,7 @@ This function should only modify configuration layer settings."
                                       writeroom-mode
 				                              pyim-basedict
 				                              posframe
+                                      keyfreq
                                       amx
                                       elpa-mirror
 				      )
@@ -94,7 +95,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(evil-escape evil-goggles evil-tutor evil-magit  evil-mc vi-tilde-fringe spacemacs-theme org-pomodoro org-bullets orgit company-quickhelp fancy-battery tern company-tern flx-ido smeargle lorem-ipsum spray gh-md)
+   dotspacemacs-excluded-packages '(evil-escape evil-goggles evil-tutor evil-magit  evil-mc vi-tilde-fringe spacemacs-theme org-pomodoro org-bullets orgit company-quickhelp fancy-battery tern company-tern flx-ido smeargle lorem-ipsum spray gh-md smartparens smex)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -176,7 +177,7 @@ It should only modify the values of Spacemacs settings."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'hybrid
+   dotspacemacs-editing-style 'emacs
 
    ;; If non-nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
@@ -331,6 +332,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
+
    dotspacemacs-maximized-at-startup nil
 
    ;; A value from the range (0..100), in increasing opacity, which describes
@@ -510,6 +512,11 @@ before packages are loaded."
   ;; (cygwin-mount-activate)
   ;; (autoload 'aweshell)
   (setq counsel-grep-base-command "rg -i -M 120  --no-heading --line-number --color never '%s' %s")
+  (smartparens-global-mode 1)
+
+  (let ((cursor '(bar . 2)))
+    (setq evil-emacs-state-cursor cursor
+          cursor-type cursor))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -524,11 +531,9 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-search-module (quote evil-search))
- '(evil-want-Y-yank-to-eol t)
  '(package-selected-packages
    (quote
-    (amx yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify volatile-highlights uuidgen use-package treemacs-projectile treemacs-evil toc-org tide tagedit symon string-inflection spaceline-all-the-icons smex slime-company slim-mode scss-mode sass-mode restart-emacs request ranger rainbow-delimiters pyvenv pytest pyim pyenv-mode py-isort pug-mode prettier-js posframe popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pangu-spacing overseer org-projectile org-present org-mime org-download org-brain open-junk-file nameless move-text mmm-mode markdown-toc livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gmail-message-mode fuzzy font-lock+ flymd flycheck-pos-tip flx find-by-pinyin-dired fill-column-indicator eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elpa-mirror elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode doom-themes doom-modeline diminish define-word cython-mode counsel-projectile counsel-css company-web company-statistics company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode chinese-conv centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk aggressive-indent ace-pinyin ace-link ac-ispell))))
+    (key-chord yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify volatile-highlights uuidgen use-package treemacs-projectile treemacs-evil toc-org tide tagedit symon string-inflection spaceline-all-the-icons slime-company slim-mode scss-mode sass-mode restart-emacs request ranger rainbow-delimiters pyvenv pytest pyim pyenv-mode py-isort pug-mode prettier-js posframe popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pangu-spacing overseer org-projectile org-present org-mime org-download org-brain open-junk-file nameless move-text mmm-mode markdown-toc livid-mode live-py-mode link-hint keyfreq json-navigator json-mode js2-refactor js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gmail-message-mode fuzzy font-lock+ flymd flycheck-pos-tip flx find-by-pinyin-dired fill-column-indicator eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elpa-mirror elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode doom-themes doom-modeline diminish define-word cython-mode counsel-projectile counsel-css company-web company-statistics company-auctex company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode chinese-conv centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk amx aggressive-indent ace-pinyin ace-link ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
